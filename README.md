@@ -1,32 +1,97 @@
 #Description: Automates setup, deployment, and configuration of a Dockerized app on a remote ubuntu Linux server 
 #i am  deploying a Dockerized app from a GitHub repo to a remote Linux server using SSH, Docker, and Nginx.
 
-#Step-by-Step Execution:
-Before doing anything, gather all the necessary info
-Git Repo URL : https://github.com/user/myapp.git
-Personal Access Token (PAT)	Used to authenticate to GitHub:
-Branch name	Default = main	main
-SSH Username:	Username for remote server	 e.g ubuntu
-Server IP address	: The remote host  Public IP	
-SSH key path:	Your private SSH key
-Application port: e.g 8000
-###################################
-STEP 1:
-Open your terminal
-change permission of the script file:chmod +x deploy.sh
-run :./deploy.sh
-repo will be clone using your PAT,move to the cloned folder and switch to the correct branch
-############################################
-STEP 2:
-project get verified and ensure Dockerfile available
-it connect to the remote server ,Prepare the Remote Server Environment
-Update the system,install docker,Adds the user to the Docker groupand verify the installation
-###############################
-Application Deployment
-###############################
-Nginx Reverse Proxy Configuration
-#################################
-Deployment Validation
+⚙️ Conceptual Architecture
+┌──────────────────────────────┐
+│        Local Machine         │
+│ ──────────────────────────── │
+│ 1. git clone repo            │
+│ 2. Verify Docker files       │
+│ 3. scp project → server      │
+└─────────────┬────────────────┘
+              │ SSH / SCP
+              ▼
+┌──────────────────────────────┐
+│        Remote Server         │
+│ ──────────────────────────── │
+│ 4. Install Docker + Nginx    │
+│ 5. Build & run container     │
+│ 6. Nginx reverse proxy       │
+│ 7. Serve app on port 80      │
+└─────────────┬────────────────┘
+              │ HTTP
+              ▼
+┌──────────────────────────────┐
+│          Browser             │
+│ ──────────────────────────── │
+│ User accesses:               │
+│ http://<server-ip>/          │
+│ → Nginx → Docker container   │
+└──────────────────────────────┘
+
+#Step-by-Step  script Execution:
+                    ┌───────────────────────────┐
+                │ STEP 1: Collect Parameters │
+                │ GitHub URL, PAT, SSH key   │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 2: Clone Repository   │
+                │ → git clone / git pull     │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 3: Verify Docker File │
+                │ Check for Dockerfile       │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 4: SSH to Server      │
+                │ Test SSH + Docker presence │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 5: Prepare Server     │
+                │ Install Docker, Compose,   │
+                │ and Nginx                 │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 6: Deploy App         │
+                │ Copy files → docker build  │
+                │ or docker-compose up       │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 7: Configure Nginx    │
+                │ Reverse proxy → port 80    │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 8: Validate App       │
+                │ docker ps / curl / browser │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 9: Log & Fix Errors   │
+                │ Record issues manually     │
+                └─────────────┬─────────────┘
+                              │
+                              ▼
+                ┌───────────────────────────┐
+                │ STEP 10: Re-run or Cleanup │
+                │ Stop, remove, rebuild app  │
+                └───────────────────────────┘
+            
+
 #################################
 Accessing the Deployed App through :http://public_ip/demo
 ############################
